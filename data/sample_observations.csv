@@ -1,0 +1,9 @@
+site_id,observation_date,water_clarity_score,litter_count,vegetation_cover_pct,odor_score,visible_algae,nearby_urban_pressure,notes
+A1,2026-01-10,4,8,72,1,no,low,Vegetated edge with limited litter
+A2,2026-01-10,3,15,58,2,yes,medium,Moderate litter near access road
+A3,2026-01-11,2,28,41,3,yes,high,Visible algae and concentrated urban activity
+A4,2026-01-11,3,19,50,2,no,medium,Mixed vegetation and construction influence
+A5,2026-01-12,1,36,32,4,yes,high,High litter and strong odor observation
+A6,2026-01-12,4,10,67,1,no,low,Relatively clear water and stronger vegetation
+A7,2026-01-13,2,25,45,3,yes,high,Runoff indicators near developed edge
+A8,2026-01-13,3,14,60,2,no,medium,Moderate human activity
