@@ -7,6 +7,7 @@ from pathlib import Path
 import pandas as pd
 
 from analysis import clean_observations, group_summary, kruskal_tests, run_analysis
+from lawa_ingest import profile_workbook, write_manifest
 
 ROOT = Path(__file__).resolve().parents[1]
 OUTPUTS = ROOT / "outputs"
@@ -84,6 +85,27 @@ class AnalysisTestCase(unittest.TestCase):
             self.assertEqual(len(result["cleaned"]), 8)
             self.assertEqual(len(result["tests"]), 4)
             self.assertTrue((Path(tempdir) / "litter_by_pressure_ci.png").exists())
+
+    def test_lawa_profiler_records_real_workbook_structure(self):
+        with tempfile.TemporaryDirectory() as tempdir:
+            tempdir = Path(tempdir)
+            workbook = tempdir / "lake.xlsx"
+            manifest_path = tempdir / "manifest.json"
+            with pd.ExcelWriter(workbook) as writer:
+                pd.DataFrame({"Site": ["A", "B"], "TLI": [2.8, 4.1]}).to_excel(
+                    writer, sheet_name="State", index=False
+                )
+                pd.DataFrame({"Site": ["A"], "Trend": ["improving"]}).to_excel(
+                    writer, sheet_name="Trends", index=False
+                )
+            manifest = profile_workbook(workbook)
+            self.assertEqual([sheet["sheet"] for sheet in manifest["sheets"]], ["State", "Trends"])
+            self.assertEqual(manifest["sheets"][0]["rows"], 2)
+            self.assertEqual(manifest["sheets"][0]["columns"], ["Site", "TLI"])
+            self.assertEqual(len(manifest["sha256"]), 64)
+            saved = write_manifest(workbook, manifest_path)
+            self.assertTrue(manifest_path.exists())
+            self.assertEqual(saved["sha256"], manifest["sha256"])
 
 
 if __name__ == "__main__":
